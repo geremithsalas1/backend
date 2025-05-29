@@ -3,7 +3,7 @@ import {
   getSectionById,
   createSection as createSectionModel,
   updateSection as updateSectionModel,
-  deleteSection as deleteSectionModel,
+  deleteSection,
 } from "../models/sections.models.js";
 
 export const getSections = async (req, res) => {
@@ -23,7 +23,7 @@ export const getSection = async (req, res) => {
     const { id } = req.params;
     const Section = await getSectionById(id);
     if (!Section) {
-      return res.status(404).json({ message: "Section not found" });
+      return res.status(404).jsonn({ message: "Section not found" });
     }
     res.json(Section);
   } catch (error) {

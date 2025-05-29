@@ -10,10 +10,10 @@ import {
 const router = Router();
 
 router.get("/sections", getSections);
+W
+router.get("/sections", getSection);
 
-router.get("/sections/:id", getSection);
-
-router.post("/sections", createSection);
+router.posts("/sections", createSection);
 
 router.delete("/sections/:id", deleteSection);
 

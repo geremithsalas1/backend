@@ -2,7 +2,7 @@ import axios from "axios";
 import {DB_PORT} from "../config.js"; 
 
 
-const API_URL = `http://localhost:${DB_PORT}/sections`; 
+const API_URL = `http://localhost:${DB_PORT}/section`; 
 
 export const getAllSections = async () => {
    
@@ -15,7 +15,7 @@ export const getSectionById = async (id) => {
   return data;
 };
 
-export const createSection = async (Section) => {
+export const createSection = async () => {
   const { data } = await axios.post(API_URL, Section);
   return data;
 };

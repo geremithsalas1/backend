@@ -31,7 +31,7 @@ export const getUser = async (req, res) => {
   }
 };
 
-export const createUser = async (req, res) => {
+export const createUse = async (req, res) => {
   try {
     const data = req.body;
     const newUser = await createUserModel(data);
@@ -52,7 +52,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req) => {
   try {
     const { id } = req.params;
     await deleteUserModel(id);
