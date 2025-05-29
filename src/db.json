@@ -48,16 +48,6 @@
   ],
   "users": [
     {
-      "first_name": "Xavier",
-      "last_name": "Castellanos",
-      "phone": "123-456-7890",
-      "email": "john.doe@example.com",
-      "password_hash": "hashed_password_19",
-      "role_id": 1,
-      "status": "active",
-      "id": "1"
-    },
-    {
       "id": "2",
       "first_name": "Jane",
       "last_name": "Smith",
@@ -114,6 +104,76 @@
       "username": "Carlos",
       "email": "carlos@gmail.com",
       "password_hash": "Carlos123.*"
+    },
+    {
+      "id": "223",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "phone": "987-654-3210",
+      "address": "456 Elm St, Metropolis",
+      "birthdate": "1990-09-25",
+      "email": "jane.smith@example.com",
+      "password_hash": "hashed_password_2",
+      "role_id": 3,
+      "status": "active",
+      "created_at": "2025-05-02T11:00:00Z",
+      "updated_at": "2025-05-02T11:00:00Z"
+    },
+    {
+      "id": "223",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "phone": "987-654-3210",
+      "address": "456 Elm St, Metropolis",
+      "birthdate": "1990-09-25",
+      "email": "jane.smith@example.com",
+      "password_hash": "hashed_password_2",
+      "role_id": 3,
+      "status": "active",
+      "created_at": "2025-05-02T11:00:00Z",
+      "updated_at": "2025-05-02T11:00:00Z"
+    },
+    {
+      "id": "223",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "phone": "987-654-3210",
+      "address": "456 Elm St, Metropolis",
+      "birthdate": "1990-09-25",
+      "email": "jane.smith@example.com",
+      "password_hash": "hashed_password_2",
+      "role_id": 3,
+      "status": "active",
+      "created_at": "2025-05-02T11:00:00Z",
+      "updated_at": "2025-05-02T11:00:00Z"
+    },
+    {
+      "id": "223",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "phone": "987-654-3210",
+      "address": "456 Elm St, Metropolis",
+      "birthdate": "1990-09-25",
+      "email": "jane.smith@example.com",
+      "password_hash": "hashed_password_2",
+      "role_id": 3,
+      "status": "active",
+      "created_at": "2025-05-02T11:00:00Z",
+      "updated_at": "2025-05-02T11:00:00Z"
+    },
+    {
+      "id": "223",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "phone": "987-654-3210",
+      "address": "456 Elm St, Metropolis",
+      "birthdate": "1990-09-25",
+      "email": "jane.smith@example.com",
+      "password_hash": "hashed_password_2",
+      "role_id": 3,
+      "status": "active",
+      "created_at": "2025-05-02T11:00:00Z",
+      "updated_at": "2025-05-02T11:00:00Z"
     }
   ],
   "measurement_units": [
