@@ -1,73 +1,63 @@
-import { pool } from "../db.js";
+import {
+  getAllUsers,
+  getUserById,
+  createUser as createUserModel,
+  updateUser as updateUserModel,
+  deleteUser as deleteUserModel,
+} from "../models/users.models.js";
 
 export const getUsers = async (req, res) => {
-  const { rows } = await pool.query('SELECT * FROM "Usuario"');
-  res.json(rows);
+  try {
+    const users = await getAllUsers();
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    // Provide more details in the response for debugging (remove in production)
+    res.status(500).json({ message: "Error fetching users", error: error.message });
+  }
+  
 };
 
 export const getUser = async (req, res) => {
-  const { id } = req.params;
-  const { rows } = await pool.query(
-    'SELECT * FROM "Usuario" WHERE cedula = $1',
-    [id]
-  );
-  if (rows.length === 0) {
-    return res.status(404).json({ message: "User not found" });
+  try {
+    const { id } = req.params;
+    const user = await getUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(404).json({ message: "User not found" });
   }
-  res.json(rows);
 };
 
 export const createUser = async (req, res) => {
   try {
     const data = req.body;
-    console.log(data);
-    const result = await pool.query(
-      'INSERT INTO "Usuario" (cedula, nombre, apellido, correo, contrasena, id_rol) VALUES ($1, $2, $3, $4, $5, $6) returning *',
-      [
-        data.cedula,
-        data.nombre,
-        data.apellido,
-        data.correo,
-        data.contrasena,
-        data.id_rol,
-      ]
-    );
-    console.log(result);
-    return res.json(result.rows[0]);
+    const newUser = await createUserModel(data);
+    res.status(201).json(newUser);
   } catch (error) {
-    console.log(error);
-    if (error.code === "23505") {
-      return res.status(409).json({ message: "User already exists" });
-    }
+    res.status(400).json({ message: "Error creating user" });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    const updatedUser = await updateUserModel(id, data);
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ message: "Error updating user" });
   }
 };
 
 export const deleteUser = async (req, res) => {
-  const { id } = req.params;
-  const { rowCount } = await pool.query(
-    'DELETE FROM "Usuario" WHERE cedula = $1 returning *',
-    [id]
-  );
-  if (rowCount === 0) {
-    return res.status(404).json({ message: "User not found" });
+  try {
+    const { id } = req.params;
+    await deleteUserModel(id);
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(404).json({ message: "User not found" });
   }
-  return res.sendStatus(204);
-};
-
-export const updateUser = async (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-  const result = await pool.query(
-    'UPDATE "Usuario" SET cedula = $1, nombre = $2, apellido = $3, correo = $4, contrasena = $5, id_rol = $6 WHERE cedula = $7 returning *',
-    [
-      data.cedula,
-      data.nombre,
-      data.apellido,
-      data.correo,
-      data.contrasena,
-      data.id_rol,
-      id,
-    ]
-  );
-  return res.json(result.rows[0]);
 };
