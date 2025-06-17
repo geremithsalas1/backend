@@ -1,30 +1,36 @@
-import axios from "axios";
-import {DB_PORT} from "../config.js"; 
+import { PrismaClient } from '../generated/prisma/index.js';
+export const prisma = new PrismaClient();
 
-
-const API_URL = `http://localhost:${DB_PORT}/sections`; 
-
+// Obtener todas las secciones
 export const getAllSections = async () => {
-   
-  const { data } = await axios.get(API_URL);
-  return data;
+  return await prisma.sections.findMany();
 };
 
+// Obtener una sección por ID
 export const getSectionById = async (id) => {
-  const { data } = await axios.get(`${API_URL}/${id}`);
-  return data;
+  return await prisma.sections.findUnique({
+    where: { id: Number(id) },
+  });
 };
 
-export const createSection = async (Section) => {
-  const { data } = await axios.post(API_URL, Section);
-  return data;
+// Crear una nueva sección
+export const createSection = async (section) => {
+  return await prisma.sections.create({
+    data: section,
+  });
 };
 
-export const updateSection = async (id, Section) => {
-  const { data } = await axios.put(`${API_URL}/${id}`, Section);
-  return data;
+// Actualizar una sección
+export const updateSection = async (id, section) => {
+  return await prisma.sections.update({
+    where: { id: Number(id) },
+    data: section,
+  });
 };
 
+// Eliminar una sección
 export const deleteSection = async (id) => {
-  await axios.delete(`${API_URL}/${id}`);
+  return await prisma.sections.delete({
+    where: { id: Number(id) },
+  });
 };

@@ -14,13 +14,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.9.0",
     "axios": "^1.9.0",
     "express": "^5.1.0",
+    "json-server": "^1.0.0-beta.3",
     "morgan": "^1.10.0",
     "pg": "^8.16.0",
-    "json-server": "^1.0.0-beta.3"
+    "zod": "^3.25.56"
   },
   "devDependencies": {
-    "json-server": "^1.0.0-beta.3"
+    "json-server": "^1.0.0-beta.3",
+    "prisma": "^6.9.0"
   }
 }

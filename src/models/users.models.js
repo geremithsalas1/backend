@@ -1,30 +1,25 @@
-import axios from "axios";
-import {DB_PORT} from "../config.js"; 
+import { PrismaClient } from '../generated/prisma/index.js';
+export const prisma = new PrismaClient();
 
+export const getAllUsers = () => prisma.users.findMany();
 
-const API_URL = `http://localhost:${DB_PORT}/users`; 
+export const getUserById = (id) =>
+  prisma.users.findUnique({
+    where: { id: Number(id) },
+  });
 
-export const getAllUsers = async () => {
-   
-  const { data } = await axios.get(API_URL);
-  return data;
-};
+export const createUser = (user) =>
+  prisma.users.create({
+    data: user,
+  });
 
-export const getUserById = async (id) => {
-  const { data } = await axios.get(`${API_URL}/${id}`);
-  return data;
-};
+export const updateUser = (id, user) =>
+  prisma.users.update({
+    where: { id: Number(id) },
+    data: user,
+  });
 
-export const createUser = async (user) => {
-  const { data } = await axios.post(API_URL, user);
-  return data;
-};
-
-export const updateUser = async (id, user) => {
-  const { data } = await axios.put(`${API_URL}/${id}`, user);
-  return data;
-};
-
-export const deleteUser = async (id) => {
-  await axios.delete(`${API_URL}/${id}`);
-};
+export const deleteUser = (id) =>
+  prisma.users.delete({
+    where: { id: Number(id) },
+  });

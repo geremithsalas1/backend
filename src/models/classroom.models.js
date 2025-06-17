@@ -1,30 +1,36 @@
-import axios from "axios";
-import {DB_PORT} from "../config.js"; 
+import { PrismaClient } from '../generated/prisma/index.js';
+export const prisma = new PrismaClient();
 
-
-const API_URL = `http://localhost:${DB_PORT}/classrooms`; 
-
+// Obtener todas las aulas
 export const getAllClassrooms = async () => {
-   
-  const { data } = await axios.get(API_URL);
-  return data;
+  return await prisma.classrooms.findMany();
 };
 
+// Obtener un aula por ID
 export const getClassroomById = async (id) => {
-  const { data } = await axios.get(`${API_URL}/${id}`);
-  return data;
+  return await prisma.classrooms.findUnique({
+    where: { id: Number(id) },
+  });
 };
 
-export const createClassroom = async (Classroom) => {
-  const { data } = await axios.post(API_URL, Classroom);
-  return data;
+// Crear un aula
+export const createClassroom = async (classroom) => {
+  return await prisma.classrooms.create({
+    data: classroom,
+  });
 };
 
-export const updateClassroom = async (id, Classroom) => {
-  const { data } = await axios.put(`${API_URL}/${id}`, Classroom);
-  return data;
+// Actualizar un aula
+export const updateClassroom = async (id, classroom) => {
+  return await prisma.classrooms.update({
+    where: { id: Number(id) },
+    data: classroom,
+  });
 };
 
+// Eliminar un aula
 export const deleteClassroom = async (id) => {
-  await axios.delete(`${API_URL}/${id}`);
+  return await prisma.classrooms.delete({
+    where: { id: Number(id) },
+  });
 };

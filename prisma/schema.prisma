@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model assessments {
+  id          Int      @id @default(autoincrement())
+  section_id  Int
+  name        String   @db.VarChar(255)
+  description String?
+  due_date    DateTime @db.Timestamp(0)
+  max_score   Decimal  @db.Decimal(4, 2)
+  created_at  DateTime @default(dbgenerated("'2025-06-06 22:18:53.770554'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at  DateTime @default(dbgenerated("'2025-06-06 22:18:53.770554'::timestamp without time zone")) @db.Timestamp(0)
+  sections    sections @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  grades      grades[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model enrollments {
+  id              Int      @id @default(autoincrement())
+  student_id      Int
+  section_id      Int
+  enrollment_date DateTime @db.Date
+  status          String?  @default("active") @db.VarChar(30)
+  payment_status  String?  @default("unpaid") @db.VarChar(30)
+  created_at      DateTime @default(dbgenerated("'2025-06-06 22:18:44.479646'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at      DateTime @default(dbgenerated("'2025-06-06 22:18:44.479646'::timestamp without time zone")) @db.Timestamp(0)
+  sections        sections @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users           users    @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model grades {
+  id                             Int         @id @default(autoincrement())
+  assessment_id                  Int
+  student_id                     Int
+  score                          Decimal     @db.Decimal(4, 2)
+  feedback                       String?
+  graded_by                      Int?
+  created_at                     DateTime    @default(dbgenerated("'2025-06-06 22:18:36.975263'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at                     DateTime    @default(dbgenerated("'2025-06-06 22:18:36.975263'::timestamp without time zone")) @db.Timestamp(0)
+  assessments                    assessments @relation(fields: [assessment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_grades_graded_byTousers  users?      @relation("grades_graded_byTousers", fields: [graded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_grades_student_idTousers users       @relation("grades_student_idTousers", fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model inventory {
+  id                    Int                  @id @default(autoincrement())
+  name                  String               @db.VarChar(255)
+  typee                 String               @db.VarChar(30)
+  description           String?
+  current_stock         Int?
+  min_stock             Int?
+  unit_id               Int?
+  expiration_date       DateTime?            @db.Date
+  supplier              String?              @db.VarChar(255)
+  status                String?              @default("available") @db.VarChar(30)
+  last_maintenance_date DateTime?            @db.Date
+  next_maintenance_date DateTime?            @db.Date
+  location              String?              @db.VarChar(100)
+  created_at            DateTime             @default(dbgenerated("'2025-06-06 22:18:29.942757'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at            DateTime             @default(dbgenerated("'2025-06-06 22:18:29.942757'::timestamp without time zone")) @db.Timestamp(0)
+  measurement_units     measurement_units?   @relation(fields: [unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  recipe_ingredients    recipe_ingredients[] @ignore
+}
+
+model measurement_units {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(50)
+  abbreviation       String               @db.VarChar(10)
+  created_at         DateTime             @default(dbgenerated("'2025-06-06 22:18:21.936317'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at         DateTime             @default(dbgenerated("'2025-06-06 22:18:21.936317'::timestamp without time zone")) @db.Timestamp(0)
+  inventory          inventory[]
+  recipe_ingredients recipe_ingredients[] @ignore
+}
+
+model programs {
+  id                     Int        @id @default(autoincrement())
+  name                   String     @db.VarChar(255)
+  description            String?
+  duration_months        Int?
+  admission_requirements String?
+  created_at             DateTime   @default(dbgenerated("'2025-06-06 22:18:01.234355'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at             DateTime   @default(dbgenerated("'2025-06-06 22:18:01.234355'::timestamp without time zone")) @db.Timestamp(0)
+  subjects               subjects[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model recipe_ingredients {
+  recipe_id         Int?
+  inventory_id      Int?
+  quantity          Decimal           @db.Decimal(10, 2)
+  unit_id           Int
+  created_at        DateTime          @default(dbgenerated("'2025-06-06 22:17:18.978532'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at        DateTime          @default(dbgenerated("'2025-06-06 22:17:18.978532'::timestamp without time zone")) @db.Timestamp(0)
+  inventory         inventory?        @relation(fields: [inventory_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  recipes           recipes?          @relation(fields: [recipe_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  measurement_units measurement_units @relation(fields: [unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@ignore
+}
+
+model recipes {
+  id                 Int                  @id @default(autoincrement())
+  resource_id        Int
+  difficulty         String?              @db.VarChar(50)
+  preparation_time   Int?
+  steps              String
+  created_at         DateTime             @default(dbgenerated("'2025-06-06 22:17:12.269734'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at         DateTime             @default(dbgenerated("'2025-06-06 22:17:12.269734'::timestamp without time zone")) @db.Timestamp(0)
+  recipe_ingredients recipe_ingredients[] @ignore
+  resources          resources            @relation(fields: [resource_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model resources {
+  id          Int       @id @default(autoincrement())
+  subject_id  Int?
+  title       String    @db.VarChar(255)
+  type        String    @db.VarChar(50)
+  file_url    String
+  uploaded_by Int
+  created_at  DateTime  @default(dbgenerated("'2025-06-06 22:17:04.39151'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at  DateTime  @default(dbgenerated("'2025-06-06 22:17:04.39151'::timestamp without time zone")) @db.Timestamp(0)
+  recipes     recipes[]
+  subjects    subjects? @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users       users     @relation(fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model roles {
+  id         Int      @id @default(autoincrement())
+  role_name  String   @unique @db.VarChar(100)
+  created_at DateTime @default(dbgenerated("'2025-06-06 22:16:57.927276'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at DateTime @default(dbgenerated("'2025-06-06 22:16:57.927276'::timestamp without time zone")) @db.Timestamp(0)
+  users      users[]
+}
+
+model schedules {
+  id          Int      @id @default(autoincrement())
+  section_id  Int
+  day_of_week Int
+  start_time  DateTime @db.Time(0)
+  end_time    DateTime @db.Time(0)
+  created_at  DateTime @default(dbgenerated("'2025-06-06 22:16:37.770172'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at  DateTime @default(dbgenerated("'2025-06-06 22:16:37.770172'::timestamp without time zone")) @db.Timestamp(0)
+  sections    sections @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model sections {
+  id           Int           @id @default(autoincrement())
+  subject_id   Int
+  chef_id      Int
+  classroom    String?       @db.VarChar(100)
+  max_capacity Int
+  created_at   DateTime      @default(dbgenerated("'2025-06-06 22:15:04.347341'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at   DateTime      @default(dbgenerated("'2025-06-06 22:15:04.347341'::timestamp without time zone")) @db.Timestamp(0)
+  assessments  assessments[]
+  enrollments  enrollments[]
+  schedules    schedules[]
+  users        users         @relation(fields: [chef_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subjects     subjects      @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model subjects {
+  id          Int         @id @default(autoincrement())
+  program_id  Int
+  name        String      @db.VarChar(255)
+  description String?
+  credits     Int?
+  created_at  DateTime    @default(dbgenerated("'2025-06-06 22:16:25.318026'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at  DateTime    @default(dbgenerated("'2025-06-06 22:16:25.318026'::timestamp without time zone")) @db.Timestamp(0)
+  resources   resources[]
+  sections    sections[]
+  programs    programs    @relation(fields: [program_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id                              Int           @id @default(autoincrement())
+  first_name                      String        @db.VarChar(100)
+  last_name                       String        @db.VarChar(100)
+  phone                           String?       @db.VarChar(20)
+  address                         String?
+  birthdate                       DateTime?     @db.Date
+  email                           String        @unique @db.VarChar(255)
+  password_hash                   String        @db.VarChar(255)
+  role_id                         Int
+  status                          String?       @default("active") @db.VarChar(30)
+  created_at                      DateTime      @default(dbgenerated("'2025-06-06 22:15:56.783919'::timestamp without time zone")) @db.Timestamp(0)
+  updated_at                      DateTime      @default(dbgenerated("'2025-06-06 22:15:56.783919'::timestamp without time zone")) @db.Timestamp(0)
+  enrollments                     enrollments[]
+  grades_grades_graded_byTousers  grades[]      @relation("grades_graded_byTousers")
+  grades_grades_student_idTousers grades[]      @relation("grades_student_idTousers")
+  resources                       resources[]
+  sections                        sections[]
+  roles                           roles         @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
