@@ -68,11 +68,13 @@ export const getUser = async (req, res) => {
   }
 };
 
+
 export const createUser = async (req, res) => {
   const parsed = userSchema.safeParse(req.body);
   if (!parsed.success) {
     const mensajes = parsed.error.errors.map(e => e.message);
     return res.status(400).json({ message: "Error: "+mensajes }); }
+
   try {
     // Verificación de email único
  
@@ -100,7 +102,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req) => {
   try {
     const { id } = req.params;
     await deleteUserModel(id);

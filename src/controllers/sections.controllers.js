@@ -4,7 +4,7 @@ import {
   getSectionById,
   createSection as createSectionModel,
   updateSection as updateSectionModel,
-  deleteSection as deleteSectionModel,
+  deleteSection,
 } from "../models/sections.models.js";
 
 // Esquema Zod para validar sección
@@ -29,9 +29,11 @@ export const getSections = async (req, res) => {
 export const getSection = async (req, res) => {
   try {
     const { id } = req.params;
-    const section = await getSectionById(id);
-    if (!section) {
-      return res.status(404).json({ message: "Section not found" });
+
+    const Section = await getSectionById(id);
+    if (!Section) {
+      return res.status(404).jsonn({ message: "Section not found" });
+
     }
     res.json(section);
   } catch (error) {
