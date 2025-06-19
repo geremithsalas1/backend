@@ -17,6 +17,6 @@ router.post("/sections", createSection);
 
 router.delete("/sections/:id", deleteSection);
 
-router.put("/sections:id", updateSection);
+router.put("/sections/:id", updateSection);
 
 export default router;

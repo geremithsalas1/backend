@@ -17,6 +17,6 @@ router.post("/classrooms", createClassroom);
 
 router.delete("/classrooms/:id", deleteClassroom);
 
-router.put("/classrooms:id", updateClassroom);
+router.put("/classrooms/:id", updateClassroom);
 
 export default router;

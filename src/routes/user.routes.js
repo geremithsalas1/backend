@@ -6,17 +6,20 @@ import {
   getUsers,
   updateUser,
 } from "../controllers/users.controllers.js";
+import { authenticateToken } from "../middlewares/auth.js";
+import { requireAdmin } from "../middlewares/adminRequired.js";
+
 
 const router = Router();
 
-router.get("/users", getUsers);
+router.get("/users", authenticateToken, getUsers);
 
-router.get("/users/:id", getUser);
+router.get("/users/:id", authenticateToken, getUser);
 
-router.post("/users", createUser);
+router.post("/users", requireAdmin, authenticateToken, createUser);
 
-router.delete("/users/:id", deleteUser);
+router.delete("/users/:id", requireAdmin, authenticateToken, deleteUser);
 
-router.put("/users:id", updateUser);
+router.put("/users/:id", requireAdmin, authenticateToken, updateUser);
 
 export default router;
