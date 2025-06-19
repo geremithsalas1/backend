@@ -42,7 +42,8 @@ export const getSection = async (req, res) => {
 export const createSection = async (req, res) => {
   const parsed = sectionSchema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ message: "Invalid data", errors: parsed.error.errors });
+    const mensajes = parsed.error.errors.map(e => e.message);
+    return res.status(400).json("Error: " + mensajes);
   }
   try {
     const newSection = await createSectionModel(parsed.data);
@@ -56,7 +57,8 @@ export const updateSection = async (req, res) => {
   const { id } = req.params;
   const parsed = sectionSchema.partial().safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ message: "Invalid data", errors: parsed.error.errors });
+    const mensajes = parsed.error.errors.map(e => e.message);
+    return res.status(400).json("Error: " + mensajes);
   }
   try {
     const updatedSection = await updateSectionModel(id, parsed.data);
@@ -70,7 +72,7 @@ export const deleteSection = async (req, res) => {
   try {
     const { id } = req.params;
     await deleteSectionModel(id);
-    res.sendStatus(204);
+    res.status(204).json({ message: "User deleted correctly" });
   } catch (error) {
     res.status(404).json({ message: "Section not found" });
   }

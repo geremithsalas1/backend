@@ -23,3 +23,7 @@ export const deleteUser = (id) =>
   prisma.users.delete({
     where: { id: Number(id) },
   });
+
+export const getUserByEmail = async (email) => {
+  return prisma.users.findUnique({ where: { email } });
+};

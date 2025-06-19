@@ -11,9 +11,11 @@ const loginSchema = z.object({
 });
 
 export const login = async (req, res) => {
+      
   const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ message: "Datos inválidos", errors: parsed.error.errors });
+    const mensajes = parsed.error.errors.map(e => e.message);
+    return res.status(400).json({ message: "Error: "+mensajes });
   }
 
   const { email, password } = parsed.data;

@@ -5,6 +5,7 @@ import {
   createUser as createUserModel,
   updateUser as updateUserModel,
   deleteUser as deleteUserModel,
+  getUserByEmail, // Debes agregar esta función en tu modelo
 } from "../models/users.models.js";
 import { handlePrismaError } from '../utils/prismaErrorHandler.js';
 
@@ -32,7 +33,6 @@ const userSchema = z.object({
 export const getUsers = async (req, res) => {
   try {
     const users = await getAllUsers();
-    // Solo datos básicos, excluyendo password y datos sensibles
     const publicUsers = users.map(user => ({
       id: user.id,
       first_name: user.first_name,
@@ -40,7 +40,6 @@ export const getUsers = async (req, res) => {
       email: user.email,
       role_id: user.role_id,
       status: user.status,
-      // Agrega aquí otros campos públicos si lo deseas
     }));
     res.json(publicUsers);
   } catch (error) {
@@ -55,7 +54,6 @@ export const getUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    // Excluye la contraseña y datos privados
     const publicUser  = user;
     res.json({
       id: publicUser.id,
@@ -64,7 +62,6 @@ export const getUser = async (req, res) => {
       email: publicUser.email,
       role_id: publicUser.role_id,
       status: publicUser.status,
-      // Agrega aquí otros campos públicos si lo deseas
     });
   } catch (error) {
     res.status(500).json({ message: "Error fetching user", error: error.message });
@@ -74,9 +71,11 @@ export const getUser = async (req, res) => {
 export const createUser = async (req, res) => {
   const parsed = userSchema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ message: "Datos inválidos", errors: parsed.error.errors });
-  }
+    const mensajes = parsed.error.errors.map(e => e.message);
+    return res.status(400).json({ message: "Error: "+mensajes }); }
   try {
+    // Verificación de email único
+ 
     const newUser = await createUserModel(parsed.data);
     res.status(201).json(newUser);
   } catch (error) {
@@ -88,9 +87,8 @@ export const updateUser = async (req, res) => {
   const { id } = req.params;
   const parsed = userSchema.partial().safeParse(req.body);
   if (!parsed.success) {
-    return res
-      .status(400)
-      .json({ message: "Invalid data", errors: parsed.error.errors });
+    const mensajes = parsed.error.errors.map(e => e.message);
+    return res.status(400).json({ message: "Error: "+mensajes });
   }
   try {
     const updatedUser = await updateUserModel(id, parsed.data);
@@ -106,7 +104,7 @@ export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     await deleteUserModel(id);
-    res.sendStatus(204);
+    res.status(204).json({ message: "User deleted correctly" });
   } catch (error) {
     res.status(404).json({ message: "User not found" });
   }
